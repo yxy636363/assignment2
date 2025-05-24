@@ -22,7 +22,6 @@ if not os.path.exists(dataset_path):
 else:
     dataset = load_from_disk(dataset_path)
 train_dataset = dataset['train']
-train_dataset = train_dataset.rename_column("text", "input_ids")
 
 #加载预训练模型和分词器
 model_name = "gpt2"
@@ -34,7 +33,7 @@ if tokenizer.pad_token is None:
 
 #对文本进行分词处理
 def tokenize_func(examples):
-    return tokenizer(examples['input_ids'][:train_text_number], truncation=True,
+    return tokenizer(examples['text'], truncation=True,
                      max_length=128, padding="max_length",
                      return_tensors="pt")
 tokenized_train_text = train_dataset.map(tokenize_func, batched=True)
@@ -59,7 +58,7 @@ data_collator = DataCollatorForLanguageModeling(tokenizer=tokenizer, mlm=False)
 trainer = Trainer(
     model=model,
     args=training_args,
-    train_dataset=train_dataset,
+    train_dataset=tokenized_train_text,
     data_collator=data_collator,
 )
 print("Start training!")
