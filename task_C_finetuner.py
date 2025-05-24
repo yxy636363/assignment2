@@ -37,7 +37,7 @@ def tokenize_func(examples):
                      max_length=128, padding="max_length",
                      return_tensors="pt")
 tokenized_train_text = train_dataset.map(tokenize_func, batched=True)
-print(tokenized_dataset["train"][0].keys())
+print(tokenized_train_text["train"][0].keys())
 
 # #设置参数
 # output_dir = "./mimic_finetuned"
