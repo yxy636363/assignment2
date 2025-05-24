@@ -21,7 +21,6 @@ if not os.path.exists(dataset_path):
             print(f"登录后下载失败: {e}")
 else:
     dataset = load_from_disk(dataset_path)
-train_dataset = dataset['train']
 
 #加载预训练模型和分词器
 model_name = "gpt2"
@@ -36,7 +35,7 @@ def tokenize_func(examples):
     return tokenizer(examples['text'], truncation=True,
                      max_length=128, padding="max_length",
                      return_tensors="pt")
-tokenized_train_text = train_dataset.map(tokenize_func, batched=True)
+tokenized_dataset = dataset.map(tokenize_func, batched=True)
 print(tokenized_train_text["train"][0].keys())
 
 # #设置参数
@@ -53,13 +52,13 @@ print(tokenized_train_text["train"][0].keys())
 #     overwrite_output_dir=True,
 #     remove_unused_columns=False,
 # )
-# data_collator = DataCollatorForLanguageModeling(tokenizer=tokenizer, mlm=False)
+# data_collator = DataCollatorForLanguageModeling(tokenizer=tokenizer, padding="longest",mlm=False)
 
 # #训练
 # trainer = Trainer(
 #     model=model,
 #     args=training_args,
-#     train_dataset=tokenized_train_text,
+#     train_dataset=tokenized_dataset["train"],
 #     data_collator=data_collator,
 # )
 # print("Start training!")
