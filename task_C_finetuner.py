@@ -38,40 +38,33 @@ def tokenize_func(examples):
                      return_tensors="pt")
 tokenized_dataset = dataset.map(tokenize_func, batched=True)
 
-first_sample = tokenized_dataset["train"][0]
-input_ids = torch.tensor(first_sample["input_ids"])  # 转换为张量
-print("Shape:", input_ids.shape)  # 应输出如 torch.Size([128])
-print("Type:", type(input_ids))
+#设置参数
+output_dir = "./mimic_finetuned"
+training_args = TrainingArguments(
+    output_dir=output_dir,
+    per_device_train_batch_size=4,
+    num_train_epochs=3,
+    learning_rate=5e-5,
+    logging_steps=100,
+    save_steps=500,
+    do_eval=False,
+    # evaluation_strategy="no",
+    overwrite_output_dir=True,
+    remove_unused_columns=False,
+)
+data_collator = DataCollatorForLanguageModeling(tokenizer=tokenizer, padding="longest",mlm=False)
 
-print(tokenized_dataset["train"][0]["input_ids"].shape)
+#训练
+trainer = Trainer(
+    model=model,
+    args=training_args,
+    train_dataset=tokenized_dataset["train"],
+    data_collator=data_collator,
+)
+print("Start training!")
+trainer.train()
 
-# #设置参数
-# output_dir = "./mimic_finetuned"
-# training_args = TrainingArguments(
-#     output_dir=output_dir,
-#     per_device_train_batch_size=4,
-#     num_train_epochs=3,
-#     learning_rate=5e-5,
-#     logging_steps=100,
-#     save_steps=500,
-#     do_eval=False,
-#     # evaluation_strategy="no",
-#     overwrite_output_dir=True,
-#     remove_unused_columns=False,
-# )
-# data_collator = DataCollatorForLanguageModeling(tokenizer=tokenizer, padding="longest",mlm=False)
-
-# #训练
-# trainer = Trainer(
-#     model=model,
-#     args=training_args,
-#     train_dataset=tokenized_dataset["train"],
-#     data_collator=data_collator,
-# )
-# print("Start training!")
-# trainer.train()
-
-# #保存
-# model.save_pretrained(output_dir)
-# tokenizer.save_pretrained(output_dir)
-# print(f"saved at: {output_dir}")
+#保存
+model.save_pretrained(output_dir)
+tokenizer.save_pretrained(output_dir)
+print(f"saved at: {output_dir}")
