@@ -5,7 +5,7 @@ import os
 
 #加载 AUEB-NLP ECtHR 案例数据集
 os.environ["HF_ENDPOINT"] = "https://hf-mirror.com"
-dataset_path = "./ecthr_data"
+dataset_path = "./mimic_data"
 train_text_number = 1000
 if not os.path.exists(dataset_path):
     try:
@@ -22,7 +22,7 @@ if not os.path.exists(dataset_path):
     #     snapshot_download(
     #         repo_id="Medilora/mimic_iii_diagnosis_anonymous",
     #         repo_type="dataset",
-    #         cache_dir="./ecthr-data", 
+    #         cache_dir="./mimic-data", 
     #         local_dir_use_symlinks=False,
     #         resume_download=True
     #     )
@@ -49,7 +49,7 @@ def tokenize_func(examples):
 tokenized_train_text = train_dataset.map(tokenize_func, batched=True)
 
 #设置参数
-output_dir = "./ecthr_finetuned"
+output_dir = "./mimic_finetuned"
 training_args = TrainingArguments(
     output_dir=output_dir,
     per_device_train_batch_size=4,
