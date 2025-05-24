@@ -19,16 +19,6 @@ if not os.path.exists(dataset_path):
             dataset = load_dataset("Medilora/mimic_iii_diagnosis_anonymous")
         except Exception as e:
             print(f"登录后下载失败: {e}")
-    #     snapshot_download(
-    #         repo_id="Medilora/mimic_iii_diagnosis_anonymous",
-    #         repo_type="dataset",
-    #         cache_dir="./mimic-data", 
-    #         local_dir_use_symlinks=False,
-    #         resume_download=True
-    #     )
-    #     dataset.save_to_disk(dataset_path)
-    # except Exception as e:
-    #     print(f"download failed: {e}")
 else:
     dataset = load_from_disk(dataset_path)
 train_dataset = dataset['train']
