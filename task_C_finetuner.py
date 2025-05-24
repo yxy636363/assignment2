@@ -1,6 +1,6 @@
 from transformers import AutoTokenizer, AutoModelForCausalLM, Trainer, TrainingArguments, DataCollatorForLanguageModeling
 from datasets import load_dataset, load_from_disk
-from huggingface_hub import snapshot_download
+from huggingface_hub import snapshot_download, login
 import os
 
 #加载 AUEB-NLP ECtHR 案例数据集
