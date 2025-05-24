@@ -37,6 +37,7 @@ def tokenize_func(examples):
                      return_tensors="pt")
 tokenized_dataset = dataset.map(tokenize_func, batched=True)
 print(tokenized_dataset["train"][0].keys())
+print(tokenized_dataset["train"][0]["input_ids"].shape)
 
 # #设置参数
 # output_dir = "./mimic_finetuned"
