@@ -33,9 +33,8 @@ if tokenizer.pad_token is None:
 
 #对文本进行分词处理
 def tokenize_func(examples):
-    return tokenizer(examples['text'], truncation=True,
-                     max_length=256, padding="max_length",
-                     return_tensors="pt")
+    return tokenizer(examples['text'], truncation=True, max_length=256, 
+                     padding="max_length", return_tensors="pt")
 tokenized_dataset = dataset.map(tokenize_func, batched=True)
 
 #设置参数
