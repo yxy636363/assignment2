@@ -47,7 +47,8 @@ training_args = TrainingArguments(
     learning_rate=5e-5,
     logging_steps=100,
     save_steps=500,
-    evaluation_strategy="no",
+    do_eval=False,
+    # evaluation_strategy="no",
     overwrite_output_dir=True,
 )
 data_collator = DataCollatorForLanguageModeling(tokenizer=tokenizer, mlm=False)
