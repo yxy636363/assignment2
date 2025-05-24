@@ -52,7 +52,7 @@ training_args = TrainingArguments(
     overwrite_output_dir=True,
     remove_unused_columns=False,
 )
-data_collator = DataCollatorForLanguageModeling(tokenizer=tokenizer, padding="longest",mlm=False)
+data_collator = DataCollatorForLanguageModeling(tokenizer=tokenizer,mlm=False)
 
 #训练
 trainer = Trainer(
