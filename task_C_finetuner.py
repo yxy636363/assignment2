@@ -37,34 +37,35 @@ def tokenize_func(examples):
                      max_length=128, padding="max_length",
                      return_tensors="pt")
 tokenized_train_text = train_dataset.map(tokenize_func, batched=True)
+print(tokenized_dataset["train"][0].keys())
 
-#设置参数
-output_dir = "./mimic_finetuned"
-training_args = TrainingArguments(
-    output_dir=output_dir,
-    per_device_train_batch_size=4,
-    num_train_epochs=3,
-    learning_rate=5e-5,
-    logging_steps=100,
-    save_steps=500,
-    do_eval=False,
-    # evaluation_strategy="no",
-    overwrite_output_dir=True,
-    remove_unused_columns=False,
-)
-data_collator = DataCollatorForLanguageModeling(tokenizer=tokenizer, mlm=False)
+# #设置参数
+# output_dir = "./mimic_finetuned"
+# training_args = TrainingArguments(
+#     output_dir=output_dir,
+#     per_device_train_batch_size=4,
+#     num_train_epochs=3,
+#     learning_rate=5e-5,
+#     logging_steps=100,
+#     save_steps=500,
+#     do_eval=False,
+#     # evaluation_strategy="no",
+#     overwrite_output_dir=True,
+#     remove_unused_columns=False,
+# )
+# data_collator = DataCollatorForLanguageModeling(tokenizer=tokenizer, mlm=False)
 
-#训练
-trainer = Trainer(
-    model=model,
-    args=training_args,
-    train_dataset=tokenized_train_text,
-    data_collator=data_collator,
-)
-print("Start training!")
-trainer.train()
+# #训练
+# trainer = Trainer(
+#     model=model,
+#     args=training_args,
+#     train_dataset=tokenized_train_text,
+#     data_collator=data_collator,
+# )
+# print("Start training!")
+# trainer.train()
 
-#保存
-model.save_pretrained(output_dir)
-tokenizer.save_pretrained(output_dir)
-print(f"saved at: {output_dir}")
+# #保存
+# model.save_pretrained(output_dir)
+# tokenizer.save_pretrained(output_dir)
+# print(f"saved at: {output_dir}")
