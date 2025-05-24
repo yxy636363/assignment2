@@ -2,6 +2,7 @@ from transformers import AutoTokenizer, AutoModelForCausalLM, Trainer, TrainingA
 from datasets import load_dataset, load_from_disk
 from huggingface_hub import snapshot_download, login
 import os
+import torch
 
 #加载 AUEB-NLP ECtHR 案例数据集
 os.environ["HF_ENDPOINT"] = "https://hf-mirror.com"
@@ -33,10 +34,15 @@ if tokenizer.pad_token is None:
 #对文本进行分词处理
 def tokenize_func(examples):
     return tokenizer(examples['text'], truncation=True,
-                     max_length=128, padding="max_length",
+                     max_length=256, padding="max_length",
                      return_tensors="pt")
 tokenized_dataset = dataset.map(tokenize_func, batched=True)
-print(tokenized_dataset["train"][0].keys())
+
+first_sample = tokenized_dataset["train"][0]
+input_ids = torch.tensor(first_sample["input_ids"])  # 转换为张量
+print("Shape:", input_ids.shape)  # 应输出如 torch.Size([128])
+print("Type:", type(input_ids))
+
 print(tokenized_dataset["train"][0]["input_ids"].shape)
 
 # #设置参数
