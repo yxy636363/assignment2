@@ -17,6 +17,8 @@ if not os.path.exists(dataset_path):
         try:
             login(token="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")
             dataset = load_dataset("AUEB-NLP/ecthr-cases")
+        except Exception as e:
+            print(f"登录后下载失败: {e}")
     #     snapshot_download(
     #         repo_id="AUEB-NLP/ecthr-cases",
     #         repo_type="dataset",
