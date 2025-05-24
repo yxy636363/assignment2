@@ -9,16 +9,24 @@ dataset_path = "./ecthr_data"
 train_text_number = 1000
 if not os.path.exists(dataset_path):
     try:
-        snapshot_download(
-            repo_id="AUEB-NLP/ecthr-cases",
-            repo_type="dataset",
-            cache_dir="./ecthr-data", 
-            local_dir_use_symlinks=False,
-            resume_download=True
-        )
-        dataset.save_to_disk(dataset_path)
+        dataset = load_dataset("AUEB-NLP/ecthr-cases")
+        print("数据集加载成功！")
     except Exception as e:
-        print(f"download failed: {e}")
+        print(f"错误: {e}")
+        print("尝试登录后下载...")
+        try:
+            login(token="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")
+            dataset = load_dataset("AUEB-NLP/ecthr-cases")
+    #     snapshot_download(
+    #         repo_id="AUEB-NLP/ecthr-cases",
+    #         repo_type="dataset",
+    #         cache_dir="./ecthr-data", 
+    #         local_dir_use_symlinks=False,
+    #         resume_download=True
+    #     )
+    #     dataset.save_to_disk(dataset_path)
+    # except Exception as e:
+    #     print(f"download failed: {e}")
 else:
     dataset = load_from_disk(dataset_path)
 train_dataset = dataset['train']
