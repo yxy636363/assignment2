@@ -9,18 +9,18 @@ dataset_path = "./ecthr_data"
 train_text_number = 1000
 if not os.path.exists(dataset_path):
     try:
-        dataset = load_dataset("AUEB-NLP/ecthr-cases")
+        dataset = load_dataset("Medilora/mimic_iii_diagnosis_anonymous")
         print("数据集加载成功！")
     except Exception as e:
         print(f"错误: {e}")
         print("尝试登录后下载...")
         try:
             login(token="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")
-            dataset = load_dataset("AUEB-NLP/ecthr-cases")
+            dataset = load_dataset("Medilora/mimic_iii_diagnosis_anonymous")
         except Exception as e:
             print(f"登录后下载失败: {e}")
     #     snapshot_download(
-    #         repo_id="AUEB-NLP/ecthr-cases",
+    #         repo_id="Medilora/mimic_iii_diagnosis_anonymous",
     #         repo_type="dataset",
     #         cache_dir="./ecthr-data", 
     #         local_dir_use_symlinks=False,
