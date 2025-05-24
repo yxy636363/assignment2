@@ -1,5 +1,6 @@
 from transformers import AutoTokenizer, AutoModelForCausalLM, Trainer, TrainingArguments, DataCollatorForLanguageModeling
-from datasets import load_dataset, load_from_disk
+from datasets import load_dataset, load_from_disk, save_to_disk
+from huggingface_hub import snapshot_download
 import os
 
 #加载 AUEB-NLP ECtHR 案例数据集
@@ -8,7 +9,13 @@ dataset_path = "./ecthr_data"
 train_text_number = 1000
 if not os.path.exists(dataset_path):
     try:
-        dataset = load_dataset("lexlms/eurlex", "en")
+        snapshot_download(
+            repo_id="AUEB-NLP/ecthr-cases",
+            repo_type="dataset",
+            cache_dir="./ecthr-data", 
+            local_dir_use_symlinks=False,
+            resume_download=True
+        )
         dataset.save_to_disk(dataset_path)
     except Exception as e:
         print(f"download failed: {e}")
