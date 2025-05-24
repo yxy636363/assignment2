@@ -7,7 +7,7 @@ dataset_path = "./ecthr_data"
 train_text_number = 1000
 if not os.path.exists(dataset_path):
     try:
-        dataset = load_dataset("aueb-nlp/ecthr-cases")
+        dataset = load_dataset("AUEB-NLP/ecthr-cases")
         dataset.save_to_disk(dataset_path)
     except Exception as e:
         print(f"download failed: {e}")
