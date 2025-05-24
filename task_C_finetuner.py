@@ -50,6 +50,7 @@ training_args = TrainingArguments(
     do_eval=False,
     # evaluation_strategy="no",
     overwrite_output_dir=True,
+    remove_unused_columns=False，
 )
 data_collator = DataCollatorForLanguageModeling(tokenizer=tokenizer, mlm=False)
 
