@@ -3,6 +3,7 @@ from datasets import load_dataset, load_from_disk
 import os
 
 #加载 AUEB-NLP ECtHR 案例数据集
+os.environ["HF_ENDPOINT"] = "https://hf-mirror.com"
 dataset_path = "./ecthr_data"
 train_text_number = 1000
 if not os.path.exists(dataset_path):
