@@ -23,7 +23,6 @@ if not os.path.exists(dataset_path):
             print(f"登录后下载失败: {e}")
 else:
     dataset = load_from_disk(dataset_path)
-selected_dataset = dataset.select(range(1000))
 
 #加载预训练模型和分词器
 model_name = "gpt2"
@@ -36,11 +35,11 @@ if tokenizer.pad_token is None:
 
 #对文本进行分词处理
 def tokenize_func(examples):
-    tokenized = tokenizer(examples['text'], truncation=True, max_length=256, 
+    tokenized = tokenizer(examples['text'].select(range(train_text_number)), truncation=True, max_length=256, 
                      padding=True)
     assert all(isinstance(x, int) for x in tokenized["input_ids"][0]), "存在非数字token"
     return tokenized
-tokenized_dataset = selected_dataset.map(tokenize_func, batched=True)
+tokenized_dataset = dataset.map(tokenize_func, batched=True)
 
 #设置参数
 output_dir = "./mimic_finetuned"
