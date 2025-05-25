@@ -35,10 +35,7 @@ if tokenizer.pad_token is None:
 
 #对文本进行分词处理
 def tokenize_func(examples):
-    train_data = examples['text']
-    train_dataset = Dataset.from_dict(train_data[:train_text_number])
-    tokenized = tokenizer(train_dataset, truncation=True, max_length=256, 
-                     padding=True)
+    tokenized = tokenizer(examples['text'], truncation=True, max_length=256, padding=True)
     assert all(isinstance(x, int) for x in tokenized["input_ids"][0]), "存在非数字token"
     return tokenized
 tokenized_dataset = dataset.map(tokenize_func, batched=True)
@@ -87,6 +84,5 @@ print("Start training!")
 trainer.train()
 
 #保存
-model.save_pretrained(output_dir)
-tokenizer.save_pretrained(output_dir)
+trainer.save_model(output_dir)
 print(f"saved at: {output_dir}")
