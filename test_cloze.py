@@ -3,10 +3,6 @@ import torch
 
 # 配置
 output_dir = "./mimic_finetuned"
-qa_test_cases = [
-    {"question": "What are the symptoms of pneumonia?", "answer": "Symptoms include fever, cough, and shortness of breath."},
-    # 更多
-]
 cloze_test_cases = [
     "The patient with [MASK] presented with chest pain and elevated troponin levels.",  # 应填 "STEMI"
     # 更多
