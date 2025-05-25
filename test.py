@@ -5,11 +5,11 @@ import torch
 output_dir = "./mimic_finetuned"
 qa_test_cases = [
     {"question": "What are the symptoms of pneumonia?", "answer": "Symptoms include fever, cough, and shortness of breath."},
-    # 更多测试用例...
+    # 更多
 ]
 cloze_test_cases = [
     "The patient with [MASK] presented with chest pain and elevated troponin levels.",  # 应填 "STEMI"
-    # 更多测试用例...
+    # 更多
 ]
 
 # 加载原始模型
@@ -55,8 +55,10 @@ def evaluate_qa(model, tokenizer, qa_cases):
     return generated_answer
 
 # 对比微调模型和原始模型
+print("finetuned model qa:")
 finetuned_qa_results = evaluate_qa(finetuned_model, finetuned_tokenizer, qa_test_cases)
-# original_qa_results = evaluate_qa(original_model, original_tokenizer, qa_test_cases)
+print("original model qa:")
+original_qa_results = evaluate_qa(original_model, original_tokenizer, qa_test_cases)
 
 
 
