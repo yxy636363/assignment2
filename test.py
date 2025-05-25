@@ -37,6 +37,7 @@ def evaluate_qa(model, tokenizer, qa_cases):
         # 生成答案
         outputs = model.generate(**inputs, max_length=100)
         generated_answer = tokenizer.decode(outputs[0], skip_special_tokens=True)
+        print(generated_answer)
         
         # # 计算生成答案的 Perplexity
         # answer_inputs = tokenizer(generated_answer, return_tensors="pt")
