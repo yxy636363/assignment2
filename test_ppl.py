@@ -24,8 +24,14 @@ def calculate_ppl(model, tokenizer, text):
     inputs = tokenizer(text, return_tensors="pt")
     with torch.no_grad():
         logits = model(**inputs).logits
-        ppl = torch.exp(torch.nn.functional.cross_entropy(logits[:, :-1], inputs["input_ids"][:, 1:]))
-    return ppl.item()
+        shift_logits = logits[:, :-1, :].contiguous()
+        shift_labels = inputs["input_ids"][:, 1:].contiguous()
+        loss = torch.nn.functional.cross_entropy(
+            shift_logits.view(-1, shift_logits.size(-1)),
+            shift_labels.view(-1),
+            ignore_index=tokenizer.pad_token_id
+        )
+        return torch.exp(loss).item()
 
 # 在医疗文本上测试
 medical_text = "The patient was diagnosed with sepsis and treated with antibiotics."
