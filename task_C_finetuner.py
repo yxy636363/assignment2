@@ -42,17 +42,19 @@ def tokenize_func(examples):
 tokenized_dataset = dataset.map(tokenize_func, batched=True)
 
 #设置参数
-# training_args = TrainingArguments(
-#     output_dir=output_dir,
-#     per_device_train_batch_size=4,
-#     num_train_epochs=3,
-#     learning_rate=5e-5,
-#     logging_steps=100,
-#     save_steps=500,
-#     do_eval=False,        # evaluation_strategy="no",
-#     overwrite_output_dir=True,
-#     remove_unused_columns=False,
-# )
+output_dir = "./mimic_finetuned"
+training_args = TrainingArguments(
+    output_dir=output_dir,
+    per_device_train_batch_size=4,
+    num_train_epochs=3,
+    learning_rate=5e-5,
+    logging_steps=100,
+    save_steps=500,
+    do_eval=False,        # evaluation_strategy="no",
+    overwrite_output_dir=True,
+    remove_unused_columns=False,
+)
+
 # data_collator = DataCollatorForLanguageModeling(tokenizer=tokenizer,mlm=False,pad_to_multiple_of=8)
 
 class SafeDataCollator(DataCollatorForLanguageModeling):
@@ -83,7 +85,6 @@ print("Start training!")
 trainer.train()
 
 #保存
-output_dir = "./mimic_finetuned"
 model.save_pretrained(output_dir)
 tokenizer.save_pretrained(output_dir)
 print(f"saved at: {output_dir}")
