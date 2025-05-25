@@ -37,7 +37,6 @@ def evaluate_qa(model, tokenizer, qa_cases):
         # 生成答案
         outputs = model.generate(**inputs, max_length=100)
         generated_answer = tokenizer.decode(outputs[0], skip_special_tokens=True)
-        print(generated_answer)
         
         # 计算生成答案的 Perplexity
         answer_inputs = tokenizer(generated_answer, return_tensors="pt")
@@ -48,18 +47,16 @@ def evaluate_qa(model, tokenizer, qa_cases):
             ppl = torch.exp(torch.nn.functional.cross_entropy(shift_logits.view(-1, shift_logits.size(-1)),
                                                               shift_labels.view(-1),
                                                               ignore_index=tokenizer.pad_token_id))
-        results.append({
-            "question": case["question"],
-            "generated_answer": generated_answer,
-            "perplexity": ppl.item()
-        })
-    return generated_answer
+        print("question: ", case["question"])
+        print("given answer: ", case["answer"])
+        print("generated_answer: ", generated_answer)
+        print("perplexity with given answer: ", ppl.item())
 
 # Question Answering对比
 print("finetuned model qa:")
-finetuned_qa_results = evaluate_qa(finetuned_model, finetuned_tokenizer, qa_test_cases)
+evaluate_qa(finetuned_model, finetuned_tokenizer, qa_test_cases)
 print("original model qa:")
-original_qa_results = evaluate_qa(original_model, original_tokenizer, qa_test_cases)
+evaluate_qa(original_model, original_tokenizer, qa_test_cases)
 
 
 
