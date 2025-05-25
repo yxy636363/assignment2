@@ -41,12 +41,27 @@ def evaluate_qa(model, tokenizer, qa_cases):
         # 计算生成答案的 Perplexity
         answer_inputs = tokenizer(generated_answer, return_tensors="pt")
         with torch.no_grad():
-            logits = model(**answer_inputs).logits
+            logits = outputs.logits
+            attention_mask = answer_inputs.get("attention_mask", None)
             shift_logits = logits[:, :-1, :].contiguous()
             shift_labels = answer_inputs["input_ids"][:, 1:].contiguous()
-            ppl = torch.exp(torch.nn.functional.cross_entropy(shift_logits.view(-1, shift_logits.size(-1)),
-                                                              shift_labels.view(-1),
-                                                              ignore_index=tokenizer.pad_token_id))
+            loss_fct = torch.nn.CrossEntropyLoss(
+                reduction="none",
+                ignore_index=tokenizer.pad_token_id
+            )
+            per_token_loss = loss_fct(
+                shift_logits.view(-1, shift_logits.size(-1)),
+                shift_labels.view(-1)
+            )
+            if attention_mask is not None:
+                valid_tokens = (attention_mask[:, 1:] == 1).view(-1)
+                valid_loss = per_token_loss[valid_tokens]
+                avg_loss = valid_loss.mean()
+            else:
+                avg_loss = per_token_loss.mean()
+            
+            ppl = torch.exp(avg_loss)
+        
         print(generated_answer)
         print("given answer: ", case["answer"])
         print("perplexity with given answer: ", ppl.item())
