@@ -1,5 +1,5 @@
 from transformers import AutoTokenizer, AutoModelForCausalLM, Trainer, TrainingArguments, DataCollatorForLanguageModeling
-from datasets import load_dataset, load_from_disk
+from datasets import load_dataset, load_from_disk, Dataset
 from huggingface_hub import snapshot_download, login
 from torch.nn.utils.rnn import pad_sequence
 import os
@@ -35,7 +35,9 @@ if tokenizer.pad_token is None:
 
 #对文本进行分词处理
 def tokenize_func(examples):
-    tokenized = tokenizer(examples['text'][:train_text_number], truncation=True, max_length=256, 
+    train_data = examples['text']
+    train_dataset = Dataset.from_dict(train_data[:train_text_number])
+    tokenized = tokenizer(train_dataset, truncation=True, max_length=256, 
                      padding=True)
     assert all(isinstance(x, int) for x in tokenized["input_ids"][0]), "存在非数字token"
     return tokenized
