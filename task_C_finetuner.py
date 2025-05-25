@@ -24,6 +24,8 @@ if not os.path.exists(dataset_path):
 else:
     dataset = load_from_disk(dataset_path)
 
+print("原始样本类型:", type(dataset["train"][0]["text"]))  # 应为str
+
 #加载预训练模型和分词器
 model_name = "gpt2"
 tokenizer = AutoTokenizer.from_pretrained(model_name)
@@ -35,17 +37,15 @@ if tokenizer.pad_token is None:
 
 #对文本进行分词处理
 def tokenize_func(examples):
-    batch = tokenizer(examples['text'], truncation=True, max_length=256, 
+    tokenized = tokenizer(examples['text'], truncation=True, max_length=256, 
                      padding=True, return_tensors="None")
-    return {
-        "input_ids": batch["input_ids"],
-        "attention_mask": batch["attention_mask"]
-    }
+    assert all(isinstance(x, int) for x in tokenized["input_ids"][0]), "存在非数字token"
+    return tokenized
 tokenized_dataset = dataset.map(tokenize_func, batched=True)
 
 sample = tokenized_dataset["train"][0]
-print("Tokenized样本:", sample)
-print("input_ids类型:", type(sample["input_ids"][0]))  # 应该是int
+print("input_ids类型:", type(sample["input_ids"][0]))  # 应为int
+print("attention_mask长度:", len(sample["attention_mask"]))  # 应为512
 
 #设置参数
 # training_args = TrainingArguments(
@@ -60,34 +60,27 @@ print("input_ids类型:", type(sample["input_ids"][0]))  # 应该是int
 #     remove_unused_columns=False,
 # )
 # data_collator = DataCollatorForLanguageModeling(tokenizer=tokenizer,mlm=False,pad_to_multiple_of=8)
+
 class SafeDataCollator(DataCollatorForLanguageModeling):
     def __call__(self, features):
-        # 确保所有输入都是数字列表
+        # 强制类型检查
         for f in features:
             if any(isinstance(x, str) for x in f["input_ids"]):
-                raise ValueError("发现文本数据，请检查预处理流程")
+                raise ValueError("发现文本数据，请检查tokenize_function")
         
-        # 转换为张量
-        input_ids = [torch.tensor(f["input_ids"]) for f in features]
-        attention_mask = [torch.tensor(f["attention_mask"]) for f in features]
-        
-        # 填充批次
+        # 转换为PyTorch张量（明确指定类型）
         batch = {
-            "input_ids": pad_sequence(input_ids, batch_first=True, padding_value=self.tokenizer.pad_token_id),
-            "attention_mask": pad_sequence(attention_mask, batch_first=True, padding_value=0)
+            "input_ids": torch.tensor([f["input_ids"] for f in features]),
+            "attention_mask": torch.tensor([f["attention_mask"] for f in features]),
+            "labels": torch.tensor([f["input_ids"] for f in features])  # 语言建模任务
         }
-        
-        # 添加labels（语言建模需要）
-        batch["labels"] = batch["input_ids"].clone()
         return batch
 
 data_collator = SafeDataCollator(tokenizer=tokenizer, mlm=False)
 
-try:
-    test_batch = data_collator([sample])
-    print("测试批次形状:", test_batch["input_ids"].shape)
-except Exception as e:
-    print("Collator测试失败:", str(e))
+test_batch = data_collator([tokenized_dataset["train"][0]])
+print("批次张量类型:", type(test_batch["input_ids"]))  # 应为torch.Tensor
+print("批次形状:", test_batch["input_ids"].shape)  # 应为[1, 512]
 
 # #训练
 # trainer = Trainer(
