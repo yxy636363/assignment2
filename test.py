@@ -7,6 +7,11 @@ output_dir = "./mimic_finetuned"
 # 加载原始模型
 original_model = AutoModelForCausalLM.from_pretrained("gpt2")
 original_tokenizer = AutoTokenizer.from_pretrained("gpt2")
+tokenizer.pad_token = tokenizer.eos_token
+model = AutoModelForCausalLM.from_pretrained(model_name)
+if tokenizer.pad_token is None:
+    tokenizer.add_special_tokens({"pad_token": "[PAD]"})
+    model.resize_token_embeddings(len(tokenizer))
 
 # 加载微调模型
 finetuned_model = AutoModelForCausalLM.from_pretrained(output_dir)
