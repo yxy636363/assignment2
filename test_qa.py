@@ -4,8 +4,10 @@ import torch
 # 配置
 output_dir = "./mimic_finetuned"
 qa_test_cases = [
-    {"question": "What are the symptoms of pneumonia?", "answer": "Symptoms include fever, cough, and shortness of breath."},
-    # 更多
+    {"question": "Lactate 5.2 mmol/L in septic shock – how to respond?", "answer": "Indicates tissue hypoperfusion:Repeat lactate in 2 hours. Optimize fluids/vasopressors. Source control (e.g., antibiotics, drainage)"},
+    # {"question": "", "answer": ""}
+    # {"question": "", "answer": ""}
+    # {"question": "", "answer": ""}
 ]
 
 # 加载原始模型
