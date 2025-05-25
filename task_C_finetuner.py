@@ -48,6 +48,8 @@ if isinstance(sample["input_ids"], list):
         },
         batched=False
     )
+print(type(tokenized_dataset["train"][0]["input_ids"]))  # 应输出 torch.Tensor
+print(tokenized_dataset["train"][0]["input_ids"].shape)  # 应显示形状
 
 # #设置参数
 # output_dir = "./mimic_finetuned"
