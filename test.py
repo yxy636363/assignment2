@@ -47,7 +47,8 @@ def evaluate_qa(model, tokenizer, qa_cases):
             shift_labels = answer_inputs["input_ids"][:, 1:].contiguous()
             ppl = torch.exp(torch.nn.functional.cross_entropy(shift_logits.view(-1, shift_logits.size(-1)),
                                                               shift_labels.view(-1),
-                                                              ignore_index=tokenizer.pad_token_id)
+                                                              ignore_index=tokenizer.pad_token_id
+                                                             )
         results.append({
             "question": case["question"],
             "generated_answer": generated_answer,
