@@ -37,9 +37,17 @@ def tokenize_func(examples):
                      padding="max_length", return_tensors="pt")
 tokenized_dataset = dataset.map(tokenize_func, batched=True)
 
+#修复
 sample = tokenized_dataset["train"][0]
-print(type(sample["input_ids"]))  # 应该输出torch.Tensor
-print(sample["input_ids"].shape)  # 应该如torch.Size([512])
+if isinstance(sample["input_ids"], list):
+    print("检测到列表格式，正在转换为张量...")
+    tokenized_dataset = tokenized_dataset.map(
+        lambda x: {
+            "input_ids": torch.tensor(x["input_ids"]),
+            "attention_mask": torch.tensor(x["attention_mask"])
+        },
+        batched=False
+    )
 
 # #设置参数
 # output_dir = "./mimic_finetuned"
