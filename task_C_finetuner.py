@@ -24,8 +24,6 @@ if not os.path.exists(dataset_path):
 else:
     dataset = load_from_disk(dataset_path)
 
-print("原始样本类型:", type(dataset["train"][0]["text"]))  # 应为str
-
 #加载预训练模型和分词器
 model_name = "gpt2"
 tokenizer = AutoTokenizer.from_pretrained(model_name)
@@ -38,7 +36,7 @@ if tokenizer.pad_token is None:
 #对文本进行分词处理
 def tokenize_func(examples):
     tokenized = tokenizer(examples['text'], truncation=True, max_length=256, 
-                     padding=True, return_tensors="None")
+                     padding=True)
     assert all(isinstance(x, int) for x in tokenized["input_ids"][0]), "存在非数字token"
     return tokenized
 tokenized_dataset = dataset.map(tokenize_func, batched=True)
