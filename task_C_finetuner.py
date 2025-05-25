@@ -26,6 +26,7 @@ else:
 #加载预训练模型和分词器
 model_name = "gpt2"
 tokenizer = AutoTokenizer.from_pretrained(model_name)
+tokenizer.pad_token = tokenizer.eos_token
 model = AutoModelForCausalLM.from_pretrained(model_name)
 if tokenizer.pad_token is None:
     tokenizer.add_special_tokens({"pad_token": "[PAD]"})
@@ -33,39 +34,36 @@ if tokenizer.pad_token is None:
 
 #对文本进行分词处理
 def tokenize_func(examples):
-    return tokenizer(examples['text'], truncation=True, max_length=256, 
+    batch = tokenizer(examples['text'], truncation=True, max_length=256, 
                      padding="max_length", return_tensors="pt")
+    return {
+        "input_ids": batch["input_ids"].tolist(),
+        "attention_mask": batch["attention_mask"].tolist()
+    }
 tokenized_dataset = dataset.map(tokenize_func, batched=True)
 
 #修复
 sample = tokenized_dataset["train"][0]
-if isinstance(sample["input_ids"], list):
-    print("检测到列表格式，正在转换为张量...")
-    tokenized_dataset = tokenized_dataset.map(
-        lambda x: {
-            "input_ids": torch.tensor(x["input_ids"]),
-            "attention_mask": torch.tensor(x["attention_mask"])
-        },
-        batched=False
-    )
-print(type(tokenized_dataset["train"][0]["input_ids"]))  # 应输出 torch.Tensor
-print(tokenized_dataset["train"][0]["input_ids"].shape)  # 应显示形状
+print(type(sample["input_ids"]))
 
-# #设置参数
-# output_dir = "./mimic_finetuned"
-# training_args = TrainingArguments(
-#     output_dir=output_dir,
-#     per_device_train_batch_size=4,
-#     num_train_epochs=3,
-#     learning_rate=5e-5,
-#     logging_steps=100,
-#     save_steps=500,
-#     do_eval=False,
-#     # evaluation_strategy="no",
-#     overwrite_output_dir=True,
-#     remove_unused_columns=False,
-# )
-# data_collator = DataCollatorForLanguageModeling(tokenizer=tokenizer,mlm=False)
+#设置参数
+output_dir = "./mimic_finetuned"
+training_args = TrainingArguments(
+    output_dir=output_dir,
+    per_device_train_batch_size=4,
+    num_train_epochs=3,
+    learning_rate=5e-5,
+    logging_steps=100,
+    save_steps=500,
+    do_eval=False,        # evaluation_strategy="no",
+    overwrite_output_dir=True,
+    remove_unused_columns=False,
+)
+data_collator = DataCollatorForLanguageModeling(tokenizer=tokenizer,mlm=False,pad_to_multiple_of=8)
+
+batch = data_collator([sample])
+print(type(batch["input_ids"]))  # 应该看到 <class 'torch.Tensor'>
+print(batch["input_ids"].shape)  # 应该看到如 torch.Size([1, 512])
 
 # #训练
 # trainer = Trainer(
