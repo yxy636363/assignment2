@@ -12,7 +12,7 @@ train_text_number = 1000
 if not os.path.exists(dataset_path):
     try:
         dataset = load_dataset("Medilora/mimic_iii_diagnosis_anonymous")
-        print("数据集加载成功！")
+        print("load successfully!")
     except Exception as e:
         print(f"错误: {e}")
         print("尝试登录后下载...")
