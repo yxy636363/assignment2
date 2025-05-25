@@ -38,4 +38,4 @@ medical_text = "The patient was diagnosed with sepsis and treated with antibioti
 finetuned_ppl = calculate_ppl(finetuned_model, finetuned_tokenizer, medical_text)
 original_ppl = calculate_ppl(original_model, original_tokenizer, medical_text)
 
-print(f"微调模型 PPL: {finetuned_ppl:.2f}, 原始模型 PPL: {original_ppl:.2f}")
+print(f"finetuned model PPL: {finetuned_ppl:.2f}, original model PPL: {original_ppl:.2f}")
