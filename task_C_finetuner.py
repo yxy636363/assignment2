@@ -41,10 +41,6 @@ def tokenize_func(examples):
     return tokenized
 tokenized_dataset = dataset.map(tokenize_func, batched=True)
 
-sample = tokenized_dataset["train"][0]
-print("input_ids类型:", type(sample["input_ids"][0]))  # 应为int
-print("attention_mask长度:", len(sample["attention_mask"]))  # 应为512
-
 #设置参数
 # training_args = TrainingArguments(
 #     output_dir=output_dir,
@@ -76,22 +72,18 @@ class SafeDataCollator(DataCollatorForLanguageModeling):
 
 data_collator = SafeDataCollator(tokenizer=tokenizer, mlm=False)
 
-test_batch = data_collator([tokenized_dataset["train"][0]])
-print("批次张量类型:", type(test_batch["input_ids"]))  # 应为torch.Tensor
-print("批次形状:", test_batch["input_ids"].shape)  # 应为[1, 512]
+#训练
+trainer = Trainer(
+    model=model,
+    args=training_args,
+    train_dataset=tokenized_dataset["train"],
+    data_collator=data_collator,
+)
+print("Start training!")
+trainer.train()
 
-# #训练
-# trainer = Trainer(
-#     model=model,
-#     args=training_args,
-#     train_dataset=tokenized_dataset["train"],
-#     data_collator=data_collator,
-# )
-# print("Start training!")
-# trainer.train()
-
-# #保存
-# output_dir = "./mimic_finetuned"
-# model.save_pretrained(output_dir)
-# tokenizer.save_pretrained(output_dir)
-# print(f"saved at: {output_dir}")
+#保存
+output_dir = "./mimic_finetuned"
+model.save_pretrained(output_dir)
+tokenizer.save_pretrained(output_dir)
+print(f"saved at: {output_dir}")
