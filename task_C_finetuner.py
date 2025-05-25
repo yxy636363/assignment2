@@ -35,7 +35,7 @@ if tokenizer.pad_token is None:
 
 #对文本进行分词处理
 def tokenize_func(examples):
-    tokenized = tokenizer(examples['text'].select(range(train_text_number)), truncation=True, max_length=256, 
+    tokenized = tokenizer(examples['text'][:train_text_number], truncation=True, max_length=256, 
                      padding=True)
     assert all(isinstance(x, int) for x in tokenized["input_ids"][0]), "存在非数字token"
     return tokenized
