@@ -56,7 +56,7 @@ def evaluate_qa(model, tokenizer, qa_cases):
 
 # 对比微调模型和原始模型
 finetuned_qa_results = evaluate_qa(finetuned_model, finetuned_tokenizer, qa_test_cases)
-original_qa_results = evaluate_qa(original_model, original_tokenizer, qa_test_cases)
+# original_qa_results = evaluate_qa(original_model, original_tokenizer, qa_test_cases)
 
 
 
