@@ -47,9 +47,8 @@ def evaluate_qa(model, tokenizer, qa_cases):
             ppl = torch.exp(torch.nn.functional.cross_entropy(shift_logits.view(-1, shift_logits.size(-1)),
                                                               shift_labels.view(-1),
                                                               ignore_index=tokenizer.pad_token_id))
-        print("question: ", case["question"])
+        print(generated_answer)
         print("given answer: ", case["answer"])
-        print("generated_answer: ", generated_answer)
         print("perplexity with given answer: ", ppl.item())
 
 # Question Answering对比
