@@ -41,7 +41,7 @@ def evaluate_qa(model, tokenizer, qa_cases):
         # 计算生成答案的 Perplexity
         answer_inputs = tokenizer(generated_answer, return_tensors="pt")
         with torch.no_grad():
-            logits = model(**answer_inputs).logit
+            logits = model(**answer_inputs).logits
             attention_mask = answer_inputs.get("attention_mask", None)
             shift_logits = logits[:, :-1, :].contiguous()
             shift_labels = answer_inputs["input_ids"][:, 1:].contiguous()
