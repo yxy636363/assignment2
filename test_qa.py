@@ -4,10 +4,10 @@ import torch
 # 配置
 output_dir = "./mimic_finetuned"
 qa_test_cases = [
-    {"question": "Lactate 5.2 mmol/L in septic shock – how to respond?", "answer": "Indicates tissue hypoperfusion:Repeat lactate in 2 hours. Optimize fluids/vasopressors. Source control (e.g., antibiotics, drainage)"},
-    # {"question": "", "answer": ""}
-    # {"question": "", "answer": ""}
-    # {"question": "", "answer": ""}
+    {"question": "Lactate 5.2 mmol/L in septic shock – how to respond?", "answer": "Indicates tissue hypoperfusion:Repeat lactate in 2 hours. Optimize fluids/vasopressors. Source control (e.g., antibiotics, drainage)"}, 
+    {"question": "CRRT machine shows "TMP >250 mmHg" – causes?", "answer": "Possible filter clotting: Check anticoagulation (e.g., citrate dose), Increase blood flow rate, Replace circuit if persistent"}, 
+    {"question": "Norepinephrine at 0.3 mcg/kg/min with persistent hypotension – next agent?", "answer": "Add vasopressin 0.03 U/min or consider Epinephrine for cardiogenic shock or Angiotensin II in vasodilatory shock"}, 
+    # {"question": "", "answer": ""}, 
 ]
 
 # 加载原始模型
