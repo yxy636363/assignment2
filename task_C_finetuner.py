@@ -5,7 +5,7 @@ from torch.nn.utils.rnn import pad_sequence
 import os
 import torch
 
-#加载 AUEB-NLP ECtHR 案例数据集
+#加载 MIMIC-III 案例数据集
 os.environ["HF_ENDPOINT"] = "https://hf-mirror.com"
 dataset_path = "./mimic_data"
 train_text_number = 1000
