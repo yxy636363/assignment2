@@ -62,22 +62,10 @@ def evaluate_qa(model, tokenizer, qa_cases):
         
         print(generated_answer)
         print("given answer: ", case["answer"])
-        print("perplexity with given answer: ", ppl.item())
+        print("perplexity: ", ppl.item())
 
 # Question Answering对比
 print("finetuned model qa:")
 evaluate_qa(finetuned_model, finetuned_tokenizer, qa_test_cases)
 print("original model qa:")
 evaluate_qa(original_model, original_tokenizer, qa_test_cases)
-
-
-
-
-
-
-
-
-
-
-
-
