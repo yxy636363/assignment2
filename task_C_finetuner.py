@@ -10,17 +10,8 @@ os.environ["HF_ENDPOINT"] = "https://hf-mirror.com"
 dataset_path = "./mimic_data"
 train_text_number = 1000
 if not os.path.exists(dataset_path):
-    try:
-        dataset = load_dataset("Medilora/mimic_iii_diagnosis_anonymous")
-        print("load successfully!")
-    except Exception as e:
-        print(f"错误: {e}")
-        print("尝试登录后下载...")
-        try:
-            login(token="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")
-            dataset = load_dataset("Medilora/mimic_iii_diagnosis_anonymous")
-        except Exception as e:
-            print(f"登录后下载失败: {e}")
+    dataset = load_dataset("Medilora/mimic_iii_diagnosis_anonymous")
+    print("load successfully!")
 else:
     dataset = load_from_disk(dataset_path)
 
@@ -56,22 +47,17 @@ training_args = TrainingArguments(
 
 # data_collator = DataCollatorForLanguageModeling(tokenizer=tokenizer,mlm=False,pad_to_multiple_of=8)
 
-class SafeDataCollator(DataCollatorForLanguageModeling):
+class TorchDataCollator(DataCollatorForLanguageModeling):
     def __call__(self, features):
-        # 强制类型检查
-        for f in features:
-            if any(isinstance(x, str) for x in f["input_ids"]):
-                raise ValueError("发现文本数据，请检查tokenize_function")
-        
-        # 转换为PyTorch张量（明确指定类型）
+        # 转换为PyTorch张量
         batch = {
             "input_ids": torch.tensor([f["input_ids"] for f in features]),
             "attention_mask": torch.tensor([f["attention_mask"] for f in features]),
-            "labels": torch.tensor([f["input_ids"] for f in features])  # 语言建模任务
+            "labels": torch.tensor([f["input_ids"] for f in features])
         }
         return batch
 
-data_collator = SafeDataCollator(tokenizer=tokenizer, mlm=False)
+data_collator = TorchDataCollator(tokenizer=tokenizer, mlm=False)
 
 #训练
 trainer = Trainer(
